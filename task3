@@ -1,0 +1,26 @@
+---
+- name: Verify Kubernetes Connection
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check if kubeconfig exists
+      stat:
+        path: ~/.kube/config"
+      register: kubeconfig_stat
+
+    - name: Show kubeconfig status
+      debug:
+        msg: "Kubeconfig exists: {{ kubeconfig_stat.stat.exists }}"
+
+    - name: Test connection
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: default
+      register: connection_test
+      when: kubeconfig_stat.stat.exists
+
+    - name: Show connection result
+      debug:
+        msg: "Successfully connected to cluster"
+      when: connection_test is succeeded
