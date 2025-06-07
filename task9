@@ -1,0 +1,107 @@
+---
+- name: Kubernetes Management with Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    namespace: "ansible-demo"
+    app_name: "sample-app"
+
+  tasks:
+    - name: Create a namespace
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+      register: namespace_result
+
+    - name: Display namespace creation result
+      debug:
+        msg: "Namespace {{ namespace }} created successfully"
+      when: namespace_result.changed
+
+    - name: Create ConfigMap with application configuration
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: "{{ app_name }}-config"
+            namespace: "{{ namespace }}"
+          data:
+            app.properties: |
+              server.port=8080
+              logging.level=INFO
+              database.url=jdbc:mysql://db:3306/myapp
+            nginx.conf: |
+              server { 
+                listen 80; 
+                location / {
+                  proxy_pass http://backend:8080;
+                }
+              }
+
+    - name: Create Secret for database credentials
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: "{{ app_name }}-secret"
+            namespace: "{{ namespace }}"
+          type: Opaque
+          data:
+            username: "{{ 'admin' | b64encode }}"
+            password: "{{ 'secretpassword123' | b64encode }}"
+            database: "{{ 'myapp' | b64encode }}"
+
+    - name: Create Deployment
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "{{ app_name }}-deployment"
+            namespace: "{{ namespace }}"
+            labels:
+              app: "{{ app_name }}"
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: "{{ app_name }}"
+            template:
+              metadata:
+                labels:
+                  app: "{{ app_name }}"
+              spec:
+                containers:
+                - name: "{{ app_name }}"
+                  image: nginx:1.21
+                  ports:
+                  - containerPort: 80
+                  env:
+                  - name: DB_USERNAME
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ app_name }}-secret"
+                        key: username
+                  - name: DB_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ app_name }}-secret"
+                        key: password
+                  volumeMounts:
+                  - name: config-volume
+                    mountPath: /etc/nginx/conf.d
+                volumes:
+                - name: config-volume
+                  configMap:
+                    name: "{{ app_name }}-config"
+                    items:
+                    - key: nginx.conf
+                      path: default.conf
