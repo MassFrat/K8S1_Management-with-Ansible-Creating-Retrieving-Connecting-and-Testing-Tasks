@@ -1,0 +1,11 @@
+---
+- name: Test Kubernetes Modules in Ansible
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    # Test 1: Get cluster information
+    - name: Get cluster info
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+      register: cluster_nodes
