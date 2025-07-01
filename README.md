@@ -1,5 +1,30 @@
 # Kubernetes Core K8s Modules
 
+## Synopsis:
+Use the Kubernetes Python client to perform CRUD operations on K8s objects. 
+Pass the object definition from a source file or inline. See examples for reading files and using Jinja templates or vault-encrypted files.
+Access to the full range of K8s APIs.
+Use the kubernetes.core.k8s_info module to obtain a list of items about an object of type kind
+Authenticate using either a config file, certificates, password or token
+Supports check mode.
+
+<br/>
+
+---------------
+## Requirements:
+python >= 3.9
+
+kubernetes >= 24.2.0
+
+PyYAML >= 3.11
+
+jsonpatch
+
+---------
+
+<br/>
+
+
 ## Overview:
 The kubernetes.core.k8s collection provides a comprehensive set of Ansible modules for managing Kubernetes resources. These modules enable infrastructure-as-code approaches to Kubernetes cluster management, allowing you to declaratively define, deploy, and manage Kubernetes objects through Ansible playbooks.
 
@@ -49,4 +74,4 @@ Ingress resources
 Custom Resource Definitions (CRDs)
 And any other Kubernetes resource
 
-## This collection provides a powerful foundation for Kubernetes infrastructure automation, enabling teams to implement reliable, repeatable, and scalable cluster management workflows through Ansible's familiar declarative syntax.
+### This collection provides a powerful foundation for Kubernetes infrastructure automation, enabling teams to implement reliable, repeatable, and scalable cluster management workflows through Ansible's familiar declarative syntax.
