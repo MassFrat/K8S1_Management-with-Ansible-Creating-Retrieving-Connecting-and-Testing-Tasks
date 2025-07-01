@@ -40,16 +40,15 @@ The kubernetes.core collection contains modules that interact with Kubernetes AP
 
 The main module for managing Kubernetes resources. It can handle any Kubernetes API object including:
 
-Deployments
-
+Deployments <br/>
 Services <br/>
-ConfigMaps
-Secrets
-Pods
-Namespaces
-Ingress resources
-Custom Resource Definitions (CRDs)
-And any other Kubernetes resource
+ConfigMaps <br/>
+Secrets <br/>
+Pods <br/>
+Namespaces <br/>
+Ingress resources <br/>
+Custom Resource Definitions (CRDs) <br/>
+And any other Kubernetes resource <br/>
 
 <br/>
 
@@ -63,7 +62,7 @@ patched: Applies specific modifications to existing resources
 
 <br/>
 
-## This module is part of the kubernetes.core collection (version 5.3.0).
+### This module is part of the kubernetes.core collection (version 5.3.0).
 
 You might already have this collection installed if you are using the ansible package. It is not included in ansible-core. To check whether it is installed, run ansible-galaxy collection list.
 
